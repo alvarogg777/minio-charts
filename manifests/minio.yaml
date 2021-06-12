@@ -303,7 +303,7 @@ spec:
             requests:
               memory: 4Gi      
       imagePullSecrets:
-          regcred
+        - name: regcred
       volumes:
         - name: minio-user
           secret:
