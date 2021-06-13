@@ -21,21 +21,6 @@ metadata:
     chart: minio-8.0.10
     release: "minio"
 ---
-# Source: minio/templates/secrets.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: minio
-  labels:
-    app: minio
-    chart: minio-8.0.10
-    release: minio
-    heritage: Helm
-type: Opaque
-data:
-  accesskey: "bWluaW8="
-  secretkey: "bWluaW8xMjM="
----
 # Source: minio/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -292,22 +277,18 @@ spec:
             - name: MINIO_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: minio
-                  key: accesskey
+                  name: storage-secrets
+                  key: MINIO_ACCESS_KEY
             - name: MINIO_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: minio
-                  key: secretkey
+                  name: storage-secrets
+                  key: MINIO_SECRET_KEY
           resources:
             requests:
               memory: 4Gi      
       imagePullSecrets:
         - name: regcred
-      volumes:
-        - name: minio-user
-          secret:
-            secretName: minio        
   volumeClaimTemplates:
     - metadata:
         name: export
