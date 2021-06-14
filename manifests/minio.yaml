@@ -266,7 +266,7 @@ spec:
 
           command: [ "/bin/sh",
             "-ce",
-            "/usr/bin/docker-entrypoint.sh minio -S /etc/minio/certs/ server  http://minio-{0...3}.minio-svc.storage-system.svc.cluster.local/export{1...2}" ]
+            "/usr/bin/docker-entrypoint.sh minio -S /etc/minio/certs/ server  http://minio-{0...1}.minio-svc.storage-system.svc.cluster.local/export{1...2}" ]
           volumeMounts:
             - name: export1
               mountPath: /export1
