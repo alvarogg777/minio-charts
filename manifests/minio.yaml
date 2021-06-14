@@ -239,7 +239,7 @@ spec:
     type: RollingUpdate
   podManagementPolicy: "Parallel"
   serviceName: minio-svc
-  replicas: 3
+  replicas: 4
   selector:
     matchLabels:
       app: minio
@@ -266,7 +266,7 @@ spec:
 
           command: [ "/bin/sh",
             "-ce",
-            "/usr/bin/docker-entrypoint.sh minio -S /etc/minio/certs/ server  http://minio-{0...2}.minio-svc.storage-system.svc.cluster.local/export" ]
+            "/usr/bin/docker-entrypoint.sh minio -S /etc/minio/certs/ server  http://minio-{0...3}.minio-svc.storage-system.svc.cluster.local/export" ]
           volumeMounts:
             - name: export
               mountPath: /export            
