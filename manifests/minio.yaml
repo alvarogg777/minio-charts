@@ -98,6 +98,10 @@ data:
       if ! checkBucketExists $BUCKET ; then
         echo "Creating bucket '$BUCKET'"
         ${MC} mb myminio/$BUCKET
+        if [ $BUCKET = "accuayto" ] ; then
+          ${MC} cp /storage/txtHeaders.pkl myminio/$BUCKET/txtHeaders.pkl
+          ${MC} cp /storage/aytoMetClust.parquet myminio/$BUCKET/aytoMetClust.parquet
+        fi
       else
         echo "Bucket '$BUCKET' already exists."
       fi
@@ -332,7 +336,7 @@ spec:
       serviceAccountName: "minio"
       containers:
       - name: minio-mc
-        image: "minio/mc:RELEASE.2021-02-14T04-28-06Z"
+        image: alvarogg777/arm64v8/ds-minio # "minio/mc:RELEASE.2021-02-14T04-28-06Z"
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "/config/initialize"]
         env:
