@@ -259,9 +259,6 @@ spec:
       labels:
         app: minio
         release: minio
-      annotations:
-        checksum/secrets: 90eb227517237e02033b7cac4407684218b0824c4cd3698d666c40a684dd19b1
-        checksum/config: 45812e853e5c4d1a94ec03d8fbefe591aef2371100233346e28bcdaa29e0e431
     spec:
       serviceAccountName: "minio"
       securityContext:
@@ -333,7 +330,7 @@ spec:
             - configMap:
                 name: minio
             - secret:
-                name: minio
+                name: storage-secrets
       serviceAccountName: "minio"
       containers:
       - name: minio-mc
