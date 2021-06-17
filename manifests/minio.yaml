@@ -334,7 +334,7 @@ spec:
       serviceAccountName: "minio"
       containers:
       - name: minio-mc
-        image: alvarogg777/arm64v8/ds-minio # "minio/mc:RELEASE.2021-02-14T04-28-06Z"
+        image: alvarogg777/arm64v8:ds-minio # "minio/mc:RELEASE.2021-02-14T04-28-06Z"
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "/config/initialize"]
         env:
