@@ -132,6 +132,7 @@ data:
     # Create the buckets
     createBucket accuayto none false 
     createBucket mlflow none false 
+    createBucket bentoml none false 
     createBucket accuayto none false 
     createBucket ploomber none false 
     createBucket storage none false 
