@@ -44,7 +44,7 @@ data:
       SCHEME=$1
       ATTEMPTS=0 ; LIMIT=29 ; # Allow 30 attempts
       set -e ; # fail if we can't read the keys.
-      ACCESS=$(cat /config/accesskey) ; SECRET=$(cat /config/secretkey) ;
+      ACCESS=$(cat /config/MINIO_ACCESS_KEY) ; SECRET=$(cat /config/MINIO_SECRET_KEY) ;
       set +e ; # The connections to minio are allowed to fail.
       echo "Connecting to Minio server: $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT" ;
       MC_COMMAND="${MC} config host add myminio $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET" ;
@@ -125,6 +125,13 @@ data:
     # Try connecting to Minio instance
     scheme=http
     connectToMinio $scheme
+    # Create the buckets
+    createBucket accuayto none false 
+    createBucket mlflow none false 
+    createBucket accuayto none false 
+    createBucket ploomber none false 
+    createBucket storage none false 
+    createBucket temp none false
 ---
 # Source: minio/templates/pvc.yaml
 apiVersion: v1
@@ -141,7 +148,7 @@ spec:
     - "ReadWriteOnce"
   resources:
     requests:
-      storage: "500Gi"
+      storage: "10Gi"
   storageClassName: "longhorn"
 ---
 # Source: minio/templates/post-install-prometheus-metrics-role.yaml
@@ -247,6 +254,9 @@ spec:
       labels:
         app: minio
         release: minio
+      annotations:
+        checksum/secrets: 90eb227517237e02033b7cac4407684218b0824c4cd3698d666c40a684dd19b1
+        checksum/config: 45812e853e5c4d1a94ec03d8fbefe591aef2371100233346e28bcdaa29e0e431
     spec:
       serviceAccountName: "minio"
       securityContext:
@@ -287,3 +297,52 @@ spec:
         - name: export
           persistentVolumeClaim:
             claimName: minio
+---
+# Source: minio/templates/post-install-create-bucket-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-make-bucket-job
+  labels:
+    app: minio-make-bucket-job
+    chart: minio-8.0.10
+    release: minio
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    metadata:
+      labels:
+        app: minio-job
+        release: minio
+    spec:
+      restartPolicy: OnFailure      
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: minio-configuration
+          projected:
+            sources:
+            - configMap:
+                name: minio
+            - secret:
+                name: minio
+      serviceAccountName: "minio"
+      containers:
+      - name: minio-mc
+        image: "minio/mc:RELEASE.2021-02-14T04-28-06Z"
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "/config/initialize"]
+        env:
+          - name: MINIO_ENDPOINT
+            value: minio
+          - name: MINIO_PORT
+            value: "9000"
+        volumeMounts:
+          - name: minio-configuration
+            mountPath: /config
+        resources:
+          requests:
+            memory: 128Mi
