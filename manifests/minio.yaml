@@ -15,7 +15,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: "minio"
-  namespace: "storage-system"
+  namespace: "storage"
   labels:
     app: minio
     chart: minio-8.0.10
@@ -210,7 +210,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: minio-update-prometheus-secret
-    namespace: "storage-system"
+    namespace: "storage"
 ---
 # Source: minio/templates/service.yaml
 apiVersion: v1
