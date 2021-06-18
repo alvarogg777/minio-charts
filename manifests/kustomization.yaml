@@ -4,4 +4,4 @@ resources:
 - https://raw.githubusercontent.com/alvarogg777/argo-combined-demo/master/argo-workflows/overlays/production/regcred.yaml
 - https://raw.githubusercontent.com/alvarogg777/argo-combined-demo/master/argo-workflows/overlays/production/authsecrets.yaml
 - minio.yaml
-namespace: storage-system
+namespace: storage
