@@ -260,6 +260,15 @@ spec:
         app: minio
         release: minio
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: NotIn
+                values:
+                - knode1
       serviceAccountName: "minio"
       securityContext:
         runAsUser: 1000
