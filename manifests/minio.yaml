@@ -233,6 +233,38 @@ spec:
     app: minio
     release: minio
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    external-dns.alpha.kubernetes.io/hostname: minio.alboroto.live
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-stg
+    traefik.frontend.passHostHeader: "true"
+    ingress.kubernetes.io/auth-url: http://authelia-service.istio-system.svc:80/api/verify?rd=https://auth.alboroto.live/
+    traefik.ingress.kubernetes.io/router.middlewares: istio-system-authelia@kubernetescrd
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    # traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: cloudflare
+spec:
+  tls:
+    - secretName: authelia-ingress-tls # alboroto.live
+      hosts:
+        - minio.alboroto.live
+  rules:
+    - host: minio.alboroto.live
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  number: 9000
+---
 # Source: minio/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
